@@ -4,29 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LAIFA</title>
+<link rel="icon" type="image/png" href="laifaicon.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Helvetica,Arial,sans-serif;background:#fff;color:#111}
-header{border-bottom:1px solid #e5e5e5}
+body{font-family:Helvetica,Arial,sans-serif;background:#fff;color:#111;overflow-x:hidden}
+header{border-bottom:1px solid #e5e5e5;background:#fff;position:sticky;top:0;z-index:10}
 .container{max-width:1100px;margin:auto;padding:20px}
+
 .nav{display:flex;justify-content:space-between;align-items:center}
 .logo{font-weight:700;letter-spacing:4px}
 
 select{padding:6px}
 
-.hero{padding:60px 0}
+.hero{padding:60px 0;animation:fadeUp 1s ease}
 .hero h1{font-size:40px;margin-bottom:30px}
 
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
 
 .product-image{
 border:1px solid #e5e5e5;
 padding:40px;
 background:#f7f7f7;
-display:flex;align-items:center;justify-content:center
+display:flex;
+align-items:center;
+justify-content:center;
+animation:fadeUp 1.2s ease
 }
 
-.product-image img{max-width:100%;height:auto}
+.product-image img{
+max-width:100%;
+height:auto;
+transition:transform .4s ease
+}
+
+.product-image img:hover{
+transform:scale(1.05)
+}
+
+.product-info{
+animation:fadeUp 1.4s ease
+}
 
 .product-info h2{font-size:26px;margin-bottom:10px}
 .price{font-size:18px;margin-bottom:20px}
@@ -36,10 +53,15 @@ border:1px solid #111;
 background:#fff;
 padding:12px 22px;
 cursor:pointer;
-letter-spacing:1px
+letter-spacing:1px;
+transition:all .25s ease
 }
 
-button:hover{background:#111;color:#fff}
+button:hover{
+background:#111;
+color:#fff;
+transform:translateY(-2px)
+}
 
 .cart{
 position:fixed;
@@ -48,8 +70,12 @@ top:20px;
 border:1px solid #111;
 padding:10px 16px;
 background:#fff;
-font-size:14px
+font-size:14px;
+cursor:pointer;
+transition:all .3s ease
 }
+
+.cart:hover{transform:scale(1.05)}
 
 .cart-panel{
 position:fixed;
@@ -59,10 +85,23 @@ border:1px solid #111;
 padding:20px;
 background:#fff;
 width:250px;
-display:none
+display:none;
+animation:slideIn .3s ease
 }
 
+.cart-item{padding:6px 0;border-bottom:1px solid #eee;font-size:14px}
+
 footer{border-top:1px solid #e5e5e5;margin-top:80px;font-size:13px;color:#777}
+
+@keyframes fadeUp{
+0%{opacity:0;transform:translateY(20px)}
+100%{opacity:1;transform:translateY(0)}
+}
+
+@keyframes slideIn{
+0%{opacity:0;transform:translateX(20px)}
+100%{opacity:1;transform:translateX(0)}
+}
 
 @media(max-width:800px){
 .grid{grid-template-columns:1fr}
@@ -107,13 +146,13 @@ Currency:
 <div class="grid">
 
 <div class="product-image">
-<img src="laifaicon.png" alt="Product 1">
+<img src="LAIFA.PNG" alt="Product 1">
 </div>
 
 <div class="product-info">
 <h2>Product 1</h2>
 <div class="price" id="price">£500</div>
-<button onclick="addToCart()">Add to Basket</button>
+<button id="addBtn" onclick="addToCart()">Add to Basket</button>
 </div>
 
 </div>
@@ -146,7 +185,7 @@ AUD:"$",
 CAD:"$"
 }
 
-let cart = []
+let cartAdded = false
 
 function updatePrice(){
 let currency = document.getElementById("currency").value
@@ -157,16 +196,21 @@ document.getElementById("price").innerText = symbols[currency] + converted
 }
 
 function addToCart(){
-cart.push("Product 1")
 
-document.getElementById("cartCount").innerText = cart.length
+if(cartAdded) return
 
-let list=""
-cart.forEach(p=>{
-list += "<div>"+p+"</div>"
-})
+cartAdded = true
 
-document.getElementById("cartItems").innerHTML = list
+document.getElementById("cartCount").innerText = "1"
+
+let item = `<div class="cart-item">Product 1</div>`
+
+document.getElementById("cartItems").innerHTML = item
+
+let btn = document.getElementById("addBtn")
+btn.innerText = "Added"
+btn.disabled = true
+
 }
 
 function toggleCart(){
