@@ -1,28 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Embedded Stream</title>
-<style>
-  body {
-    margin: 0;
-    background: black;
-  }
+<title>Footballeeee HALA MADRID COME ON LADDSS</title>
 
-  iframe {
-    width: 100vw;
-    height: 100vh;
-    border: none;
-  }
+<style>
+body{
+  margin:0;
+  display:flex;
+  height:100vh;
+  background:black;
+  color:white;
+  font-family:sans-serif;
+}
+
+#stream{
+  flex:3;
+}
+
+#chat{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  background:#111;
+}
+
+#messages{
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+}
+
+#inputArea{
+  display:flex;
+}
+
+input{
+  flex:1;
+  padding:10px;
+  border:none;
+}
+
+button{
+  padding:10px;
+}
 </style>
 </head>
 <body>
 
+<div id="stream">
 <iframe
-  src="https://247stream.pro/watch.php?stream=channels_tnt1fhd"
-  sandbox="allow-same-origin allow-scripts allow-fullscreen"
-  allowfullscreen>
+src="https://247stream.pro/watch.php?stream=channels_tnt1fhd"
+width="100%"
+height="100%"
+frameborder="0">
 </iframe>
+</div>
+
+<div id="chat">
+<div id="messages"></div>
+
+<div id="inputArea">
+<input id="msgInput" placeholder="Type message...">
+<button onclick="sendMessage()">Send</button>
+</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAGQLiTb9x2i-pjTI5msa2UwDOcwYj442Y",
+  authDomain: "laifa-9f4d0.firebaseapp.com",
+  projectId: "laifa-9f4d0",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const messagesDiv = document.getElementById("messages");
+
+const q = query(collection(db,"messages"), orderBy("time"));
+
+onSnapshot(q,(snapshot)=>{
+  messagesDiv.innerHTML="";
+  snapshot.forEach(doc=>{
+    const msg = doc.data();
+    const div = document.createElement("div");
+    div.textContent = msg.text;
+    messagesDiv.appendChild(div);
+  });
+});
+
+window.sendMessage = async function(){
+  const input = document.getElementById("msgInput");
+
+  if(input.value.trim()=="") return;
+
+  await addDoc(collection(db,"messages"),{
+    text: input.value,
+    time: Date.now()
+  });
+
+  input.value="";
+}
+
+</script>
 
 </body>
 </html>
